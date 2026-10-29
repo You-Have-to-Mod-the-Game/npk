@@ -2,6 +2,7 @@
 # Program by MCMi460
 from pathlib import Path
 from io import BytesIO
+from argparse import ArgumentParser
 
 
 class NPK:
@@ -99,26 +100,16 @@ def pack_npk(path: pathlib.Path):
 
 
 if __name__ == "__main__":
-    while True:
-        print(
-            """Please select an option:
-(1) Unpack .npk as a directory
-(2) Pack a directory as .npk
-(3) Quit"""
-        )
+    parser = ArgumentParser(description="npk (un)packer")
 
-        try:
-            option = int(input("> "))
-        except ValueError:
-            option = -1
+    parser.add_argument("input", type=str, help="path to input (.npk/folder)")
 
-        if option == 1:
-            unpack_npk(Path(input("Enter path of .npk\n> ")))
-        elif option == 2:
-            pack_npk(Path(input("Enter path of directory\n> ")))
-        elif option == 3:
-            quit()
-        else:
-            print("Unknown option; try again.")
+    args = parser.parse_args()
+    input_path = Path(args.input)
 
-        input("[Press enter to continue]")
+    if input_path.is_file():
+        unpack_npk(input_path)
+    elif input_path.is_dir():
+        pack_npk(input_path)
+    else:
+        raise ValueError("invalid input specified: %s" % input_path)
